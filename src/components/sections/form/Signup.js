@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 import "antd/dist/antd.css";
 import "./Signup.css";
 import { Form, Icon, Input, Button, Checkbox, DatePicker } from "antd";
@@ -13,7 +14,16 @@ class Signup extends Component {
           ...fieldsValue,
           DOB: fieldsValue["date-picker"].format("YYYY-MM-DD")
         };
+        delete values["date-picker"];
         console.log("Received values of form: ", values);
+        axios
+          .post("/signup", JSON.stringify(values))
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
       }
     });
   };
