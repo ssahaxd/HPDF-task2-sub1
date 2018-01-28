@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import axios from "axios";
 import "antd/dist/antd.css";
 import "./Signup.css";
-import { Form, Icon, Input, Button, Checkbox, DatePicker } from "antd";
+import { Form, Input, Button, DatePicker } from "antd";
 const FormItem = Form.Item;
 
 class Signup extends Component {
-  state = {};
-
-  submit_res = null;
+  state = {
+    res: {},
+    res_received: false
+  };
 
   handleSubmit = e => {
     e.preventDefault();
@@ -24,13 +25,8 @@ class Signup extends Component {
           .post("/signup", JSON.stringify(values))
           .then(response => {
             console.log(response);
-            this.submit_res = (
-              <div>
-                <p>
-                  Please visit<a>response</a>
-                </p>
-              </div>
-            );
+            this.setState({ res: response.data });
+            this.setState({ res_received: true });
           })
           .catch(error => {
             console.log(error);
@@ -41,6 +37,24 @@ class Signup extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
+    let result = null;
+    if (this.state.res_received) {
+      result = (
+        <p>
+          <b>
+            {this.state.res[0].message
+              ? this.state.res[0].message
+              : "User created"}
+          </b>
+          <br />
+          Visit{" "}
+          <a target="_blank" href={this.state.res[1].link}>
+            Google Sheet
+          </a>
+        </p>
+      );
+    }
+
     return (
       <Form onSubmit={this.handleSubmit} className="signup-form">
         <h4 className="signup-form--title">Sign up</h4>
@@ -105,7 +119,7 @@ class Signup extends Component {
           </Button>
           Or <a href="">Sign in</a>
         </FormItem>
-        {this.submit_res}
+        {result}
       </Form>
     );
   }
