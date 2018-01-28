@@ -6,6 +6,10 @@ import { Form, Icon, Input, Button, Checkbox, DatePicker } from "antd";
 const FormItem = Form.Item;
 
 class Signup extends Component {
+  state = {};
+
+  submit_res = null;
+
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, fieldsValue) => {
@@ -20,6 +24,13 @@ class Signup extends Component {
           .post("/signup", JSON.stringify(values))
           .then(response => {
             console.log(response);
+            this.submit_res = (
+              <div>
+                <p>
+                  Please visit<a>response</a>
+                </p>
+              </div>
+            );
           })
           .catch(error => {
             console.log(error);
@@ -27,10 +38,12 @@ class Signup extends Component {
       }
     });
   };
+
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSubmit} className="signup-form">
+        <h4 className="signup-form--title">Sign up</h4>
         <FormItem>
           {getFieldDecorator("name", {
             rules: [{ required: true, message: "Please input your Name!" }]
@@ -57,7 +70,10 @@ class Signup extends Component {
         </FormItem>
         <FormItem>
           {getFieldDecorator("password", {
-            rules: [{ required: true, message: "Please input your Password!" }]
+            rules: [
+              { required: true, message: "Please input your Password!" },
+              { min: 8, message: "Minimum password length is 8 characters" }
+            ]
           })(<Input type="password" placeholder="Password" />)}
         </FormItem>
         <FormItem>
@@ -89,6 +105,7 @@ class Signup extends Component {
           </Button>
           Or <a href="">Sign in</a>
         </FormItem>
+        {this.submit_res}
       </Form>
     );
   }
